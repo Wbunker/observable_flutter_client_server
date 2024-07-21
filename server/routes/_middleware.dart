@@ -2,15 +2,13 @@ import 'package:dart_frog/dart_frog.dart';
 import 'package:postgres/postgres.dart';
 
 Handler middleware(Handler handler) {
-  return (context) async {
-    // Execute code before request is handled.
+  // Open a PostgreSQL connection
+  final endpoint = Endpoint(
+    host: 'localhost',
+    database: 'observable',
+    username: 'postgres',
+    password: 'postgres',
+  );
 
-    // Forward the request to the respective handler.
-    final response = await handler(context);
-
-    // Execute code after request is handled.
-
-    // Return a response.
-    return response;
-  };
+  return handler.use(provider<Endpoint>((context) => endpoint));
 }
