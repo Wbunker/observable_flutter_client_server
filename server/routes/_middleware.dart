@@ -1,14 +1,15 @@
 import 'package:dart_frog/dart_frog.dart';
-import 'package:postgres/postgres.dart';
+import 'package:stormberry/stormberry.dart';
+
+final db = Database(
+  host: 'localhost',
+  port: 5432,
+  database: 'Observable',
+  username: 'postgres',
+  password: 'postgres',
+  useSSL: false,
+);
 
 Handler middleware(Handler handler) {
-  // Open a PostgreSQL connection
-  final endpoint = Endpoint(
-    host: 'localhost',
-    database: 'observable',
-    username: 'postgres',
-    password: 'postgres',
-  );
-
-  return handler.use(provider<Endpoint>((context) => endpoint));
+  return handler.use(provider<Database>((context) => db));
 }

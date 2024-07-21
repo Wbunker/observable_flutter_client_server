@@ -1,19 +1,19 @@
 import 'dart:async';
-
 import 'package:dart_frog/dart_frog.dart';
-import 'package:postgres/postgres.dart';
 import 'package:shared/shared.dart';
+import 'package:shared/shared_db_model.dart' as db;
+import 'package:stormberry/stormberry.dart';
 
 FutureOr<Response> onRequest(RequestContext context) async {
-  const user = User(id: 'asdf', email: 'thewillbunker@gmail.com');
+  final db = context.read<Database>();
 
-  const settings = ConnectionSettings(sslMode: SslMode.disable);
-  final conn = await Connection.open(
-    context.read<Endpoint>(),
-    settings: settings,
+  final user = await db.users.queryUser(1);
+  if (user == null) {
+    return Response(body: 'User not found!', statusCode: 404);
+  }
+
+  final sharedUser = User.fromDb(user);
+  return Response.json(
+    body: sharedUser.toJson(),
   );
-
-  final result = await conn.execute('SELECT NOW()');
-  print(result[0][0]);
-  return Response(body: 'Welcome to Dart Frog: ${user.email}!');
 }
